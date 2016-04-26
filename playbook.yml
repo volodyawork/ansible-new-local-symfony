@@ -1,6 +1,7 @@
 # For add new Symfony project on local machine:
 # $ ansible-playbook playbook.yml -K
 # TODO add "Setting up Permissions" - "3. Using ACL on a system that does not support chmod +a"
+# TODO in web/.htaccess change to "DirectoryIndex app_dev.php"
 ---
 - name: ansible create new local project on Symfony2 (apache2)
   hosts: localhost
