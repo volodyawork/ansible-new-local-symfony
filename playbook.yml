@@ -34,7 +34,7 @@
     - name: Create project dir
       file: path={{ project_path }} state=directory mode=0755
 
-    - name: Install symfony wit Symfony installer
+    - name: Install symfony with Symfony installer
       shell: "symfony new . 2.8"
       args:
          chdir: "{{ project_path }}"
