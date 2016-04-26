@@ -1,0 +1,48 @@
+# For deploy to remote machine use:
+# TODO add "Setting up Permissions" - "3. Using ACL on a system that does not support chmod +a"
+# $ ansible-playbook playbook.yml -K
+---
+- name: ansible create new local project on Symfony2 (apache2)
+  hosts: localhost
+  remote_user: volodya
+  vars:
+    all_projects_dir: "/var/www/volodya/var/www/"
+    project_name: my-super-project
+    local_domain: "{{ project_name }}.local"
+    local_alias: "{{ project_name }}.com"
+    project_path: "{{ all_projects_dir }}{{ project_name }}"
+    cache_path: "{{ project_path }}/app/cache"
+    logs_path: "{{ project_path }}/app/logs"
+
+  tasks:
+    - name: Create new virtual host
+      sudo: yes
+      template: src=default.conf.j2 dest=/etc/apache2/sites-available/{{ project_name }}.conf
+
+    - name: Create symbol link
+      sudo: yes
+      file: src=../sites-available/{{ project_name }}.conf dest=/etc/apache2/sites-enabled/{{ project_name }}.conf state=link
+
+    - name: Change /etc/hosts file (add line in the end)
+      sudo: yes
+      lineinfile: dest=/etc/hosts line="127.0.0.1 {{ local_domain }}"
+
+    - name: Apache2 reload
+      sudo: yes
+      service: name=apache2 state=reloaded
+
+    - name: Create project dir
+      file: path={{ project_path }} state=directory mode=0755
+
+    - name: Install symfony wit Symfony installer
+      shell: "symfony new . 2.8"
+      args:
+         chdir: "{{ project_path }}"
+
+    - name: 777 for cache
+      sudo: yes
+      file: path={{ cache_path }} state=directory mode=0777
+
+    - name: 777 for logs
+      sudo: yes
+      file: path={{ logs_path }} state=directory mode=0777
