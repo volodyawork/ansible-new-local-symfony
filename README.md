@@ -8,7 +8,7 @@
 
 #### Manual:
 
-Change in playbook.yml 2 or more parameters:
+Change in playbook.yml parameters:
 
     - all_projects_dir: "..."
     - project_name: my-super-project
